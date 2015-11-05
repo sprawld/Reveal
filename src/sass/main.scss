@@ -1,60 +1,29 @@
-//#grid {position:fixed;z-index:5;top:100px;left:0;right:0;bottom:0;background:white;}
-/*
 #pics {
-	a {
-		position:fixed;
-		color:white;
-		&:visited, &:active, &:hover {color:white;}
-		img {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
-		opacity:0;
-		display:none;
-		//transform:scale(0.7);
-			//transition:opacity 1.5s transform 1.5s;
-			//display:none;
-			&.show {
-				//opacity:1;transform:scale(1);
-			}
-		}
-	}
-		//h2 {display:none;}
-}
-*/
-
-#pics {
-	//position:absolute;top:0;left:0;bottom:0;right:0;
-
-
 	section {
-		//position:absolute;top:0;left:0;bottom:0;right:0;
-		
 		a {
 			position:absolute;
 			color:transparent;
 			&:visited, &:active, &:hover {color:white;}
-			img {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+			img {position:absolute;top:50%;left:50%;transform:translate(-50%,-50%) scale(0.5);
 			opacity:0;
-			display:none;
-			//transform:scale(0.7);
+			transition:transform 0.5s, opacity 0.5s;
+			transition-timing-function:cubic-bezier(0.4,0,0.2,1);
+			max-width:90%;max-height:90%;
 				//transition:opacity 1.5s transform 1.5s;
 				//display:none;
 				&.show {
 					//opacity:1;transform:scale(1);
+					transform:translate(-50%,-50%) scale(1);
+					opacity:1;
 				}
 			}
-			
+			z-index:-1;
 			&.display {
 				z-index:100;
 			}
 		}
 	}
-/*	
-	&.ontransition section {
-//		height:0 !important;
-		h2:not(.display) {
-			opacity:0 !important;
-		}
-	}
-*/	
+
 	&.ondisplay section {
 		height:0 !important;
 		h2:not(.display) {
@@ -63,38 +32,9 @@
 	}
 }
 
-/*
-h2 {
-	position:fixed;display:none;
-	top:0;
-	white-space:nowrap;
-	left:50%;transform:translateX(-50%);
-	animation-fill-mode:forwards;
-	&.show {
-		animation-timing-function:cubic-bezier(0,0,0.2,1);
-		display:inline-block;
-		&.left {
-			animation:showRight 0.7s;
-		}
-		&.right {
-			animation:showLeft 0.7s;
-		}
-
-		&.hide {
-			animation-timing-function:cubic-bezier(0.42,0,1,1);
-			&.left {
-				animation:hideLeft 0.7s;
-			}
-			&.right {
-				animation:hideRight 0.7s;
-			}
-		}
-	}
-}
-*/
 h2 {
 		//transition:all 0.5s;
-
+cursor:pointer;
 //display:none;position:fixed;top:0;
 max-width:90%;text-align:center;z-index:5;
 margin:auto;
@@ -104,6 +44,8 @@ margin:auto;
 	}
 
 }
+
+
 
 #gallery {position:fixed;top:0;left:0;right:0;bottom:0;background:#aaa;display:none;}
 
@@ -132,22 +74,23 @@ margin:auto;
 
 
 
-#prev {position:absolute;z-index:150;top:0;left:0;width:20%;bottom:0;opacity:0;
+#prev {position:absolute;z-index:150;top:0;left:0;width:10%;bottom:0;opacity:0;
 background:linear-gradient(to left, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%);
 
 //	url('../img/arrow-left.png') 0% center / 50% no-repeat;
-span {font-size:8vh;font-weight:bold;color:black;width:50%;height:auto;position:absolute;top:50%;left:0;transform:translateY(-50%);cursor:pointer;}
+span {font-size:8vh;font-weight:bold;color:black;width:100%;height:auto;position:absolute;top:50%;left:0;transform:translateY(-50%);cursor:pointer;}
 
 transition:opacity 0.5s;
 	&:hover {opacity:1;}
 }
 
-#next {position:absolute;z-index:150;top:0;right:0;width:20%;bottom:0;opacity:0;
+#next {position:absolute;z-index:150;top:0;right:0;width:10%;bottom:0;opacity:0;
 //background:url('../img/arrow-right.png') no-repeat center center;
 //background-size:50% auto;
-span {font-size:8vh;font-weight:bold;color:black;width:50%;height:auto;position:absolute;top:50%;right:0;transform:translateY(-50%);cursor:pointer;}
+span {text-align:right;font-size:8vh;font-weight:bold;color:black;width:100%;height:auto;position:absolute;top:50%;right:0;transform:translateY(-50%);cursor:pointer;}
 background:linear-gradient(to right, rgba(255,255,255,0) 0%,rgba(255,255,255,1) 100%);
 transition:opacity 0.5s;
+
 	&:hover {opacity:1;}
 }
 
@@ -157,3 +100,29 @@ transition:opacity 0.5s;
 
 * {font-family:Roboto, sans-serif;}
 h2 {font-size:3em;}
+
+
+#lightbox-wrap {
+	display:none;
+	&.show {
+		display:block;
+		z-index:1000;
+		opacity:1;
+	}
+	transition:opacity 0.5s;
+	&.hide {
+		opacity:0;
+	}
+	position:fixed;top:0;left:0;right:0;bottom:0;
+	background:rgba(0,0,0,0.5);
+	#lightbox {
+		overflow:hidden;
+		position:fixed;
+		img {
+			position:absolute;
+			//position:fixed;	
+			//&.portrait {width:100%;left:0;top:50%;transform:translateY(-50%);}
+			//&.landscape {height:100%;top:0;left:50%;transform:translateX(-50%);}
+		}
+	}
+}

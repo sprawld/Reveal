@@ -25,6 +25,18 @@ gulp.task('img',function() {
 		);
 });
 
+gulp.task('copyimg',function() {
+	return gulp.src('./src/img/*.jpg')
+		.pipe($.imageResize({ 
+			width : 2000,
+			height : 2000,
+			crop : false,
+			upscale: false,
+		}))
+		.pipe(gulp.dest('./dist/img/'));
+});
+
+
 gulp.task('sass',function() {
 	return gulp.src('./src/sass/*.scss')
 		.pipe($.sass().on('error', $.sass.logError))
@@ -32,6 +44,7 @@ gulp.task('sass',function() {
 		.pipe($.minifyCss())
 		.pipe(gulp.dest('./dist/css/'));
 });
+
 
 gulp.task('files',function() {
 	gulp.src(['./src/**/*.*','!./src/sass/**/*.*','!./src/js/**/*.*','!./src/img/**/*.*'])
