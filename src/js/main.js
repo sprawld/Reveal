@@ -41,21 +41,6 @@
 		var aMargin = (direction=="left") ? "25%" : (direction=="right") ? "75%" : "50%";
 		
 		section.find('img').each(function(i) {
-			/*
-			$(this).removeClass('display').velocity({
-				opacity:0,
-				'max-width':'50%',
-				'max-height':'50%',
-				//left:aMargin,
-			},{
-				duration: gallery.time.img.each,
-				easing: [0.4,0,0.2,1],
-				delay:parseInt(diag[i]*timeStep),
-				complete: function(elements) {
-					$(elements).parent().removeClass('display').hide();
-				},
-			});
-			*/
 			var $this = $(this);
 			setTimeout(function() {
 				$this.removeClass('show');
@@ -90,14 +75,12 @@
 	function layoutGallery(num) {
 		var section = gallery.obj.eq(num),
 			a = section.find('a'),
-			//img = section.find('img'),
 			length = a.length,
 			size = (gallery.width/length);
 		
 		var sizeNum = getGrid(length);
 		var sHeight = sizeNum[1];
 		var sWidth = sizeNum[0];//(parseInt(length/sizeNum) + ((length%sizeNum==0) ? 0 : 1));
-		//console.log('best fit '+sWidth+'x'+sHeight+' : '+size+'px img');
 		var aWidth = gallery.width/sWidth;
 		var aHeight = gallery.height/sHeight;
 		var aSize = 100;
@@ -125,10 +108,7 @@
 	
 	function preloadGallery(num,depth) {
 		var section = gallery.obj.eq(num);
-		if(section.hasClass('loaded')) {
-			//console.log(num +' has already been preloaded');
-			//if(depth<1 && num < gallery.length-1) preloadGallery(num+1,depth+1);
-		} else {
+		if(!section.hasClass('loaded')) {
 			gallery.preload = setTimeout(function() {
 				//console.log('preloading '+num);
 				layoutGallery(num);
@@ -155,7 +135,6 @@
 			duration:gallery.time.title.leave,
 			easing: [0.4,0,1,1],
 			complete: function(elements) {
-				//$(elements).hide();
 				$(elements).removeClass('display');
 			},
 		});
@@ -163,16 +142,12 @@
 		var galleryTitleWidth = gallery.title.width();
 		var galleryMiddle = (gallery.width-galleryTitleWidth)/2 - 2;
 		var galleryLeft = (direction=="right") ? -galleryTitleWidth : gallery.width;
-		//console.log('galleryMiddle '+galleryTitleWidth+' : '+gallery.width+' = '+galleryMiddle);
 		gallery.title.addClass('display').css({top:0,left:galleryLeft+'px',width:(galleryTitleWidth+4)+'px',opacity:1}).show().velocity({
 			left:galleryMiddle+'px',
 		},{
 			duration:gallery.time.title.leave,
 			delay:gallery.time.title.gap,
 			easing: [0,0,0.2,1],
-			complete: function(elements) {
-				//$(elements).hide();
-			},
 		});
 	
 	}
@@ -182,11 +157,8 @@
 		var section = gallery.obj.eq(num);
 		if(!section.hasClass('loaded')) {
 			if(gallery.preload) clearTimeout(gallery.preload);
-			//console.log('loading '+num);
 			layoutGallery(num);
 			loadGallery(num);
-		} else {
-			//console.log(num + ' already loaded');
 		}
 		var a = section.find('a');
 		var data = section.data('gallery');
@@ -194,19 +166,13 @@
 		var sHeight = data.grid[1];
 		var diag = getDiagonal(sWidth,sHeight,direction);
 		
-		var timeStep = gallery.time.img.step;//gallery.time.img.all/(sWidth * sHeight);
+		var timeStep = gallery.time.img.step;
 		
 		var aWidth = 100/sWidth;
 		var aTop = 10000/gallery.height;
 		var aHeight = (100-aTop)/sHeight;
-		
-		var aMargin = (direction=="left") ? "75%" : (direction=="right") ? "25%" : "50%";
-		
-		section.imagesLoaded().progress(function() {
-
-		
-		}).always(function() {
-			//console.log('always');
+				
+		section.imagesLoaded().always(function() {
 			section.addClass('loaded');
 		a.each(function(i) {
 			var left = i%sWidth;
@@ -216,24 +182,6 @@
 			var smallTop = aTop + top*aHeight;
 			$(this).addClass('display').css({top:smallTop+'%',left:smallLeft+'%',width:aWidth+'%',height:aHeight+'%'});
 			var aImg = $(this).find('img');
-			//var aSrc = aImg.attr('src').replace(/^img\/100\//,'img/'+aSize+'/');
-/*
-			aImg.css({
-				opacity:0,
-				'max-width':'50%',
-				'max-height':'50%',
-				//left:aMargin,
-			}).show().velocity({
-				opacity:1,
-				'max-width':'90%',
-				'max-height':'90%',
-				left:'50%',
-			},{
-				duration: gallery.time.img.each,
-				easing: [0.4,0,0.2,1],
-				delay:parseInt(diag[i]*timeStep),
-			});
-*/
 			setTimeout(function() {
 				aImg.addClass('show');
 			},parseInt(diag[i]*timeStep));
@@ -266,10 +214,10 @@
 			//gallery.title.css({top:top,position:'fixed'});
 			
 			var galleryTitleWidth = gallery.title.width();
-			var galleryMiddle = (gallery.width-galleryTitleWidth)/2 - 2;
+			var galleryMiddle = (gallery.width-galleryTitleWidth)/2;
 			//console.log('galleryMiddle '+galleryTitleWidth+' : '+gallery.width+' = '+galleryMiddle);
 			var num = $(this).parent().data('num');
-			gallery.title.addClass('display').css({top:top,left:left,width:(galleryTitleWidth+4)+'px'}).velocity({
+			gallery.title.addClass('display').css({top:top,left:left,width:(galleryTitleWidth)+'px'}).velocity({
 				top: 0,
 			},{
 				duration:gallery.time.title.enter,
@@ -280,7 +228,7 @@
 					$('#pics').addClass('ondisplay');
 				},
 			});
-			$('section h2:not(.display)').velocity({
+			$('#pics h2:not(.display), #pics p, #pics header').velocity({
 				opacity:0
 			},500);
 			
@@ -295,10 +243,16 @@
 			var offset = parent.offset();
 			var top = offset.top;
 			var vHeight = window.innerHeight;
+			var dHeight = $(document).height();
 			var scrollTop = 0;
 			if(top > vHeight/2) {
-				scrollTop = top - vHeight/2;
-				top = vHeight/2;
+				if(top+vHeight/2 > dHeight) {
+					scrollTop = dHeight - vHeight;
+					top = top - scrollTop;
+				} else {
+					scrollTop = top - vHeight/2;
+					top = vHeight/2;
+				}
 			}
 			self.velocity({
 				top:top+'px',
@@ -306,14 +260,14 @@
 				duration:500,
 				easing: [0.4,0,0.2,1],
 				complete: function(elements) {
-					//$(elements).removeClass('display');
+					$(elements).removeClass('display');
 				},
 			});
+			$(window).scrollTop(scrollTop);
 			hideGallery(num,"straight",function() {
 				
-				$(window).scrollTop(scrollTop);
 
-				$('section h2:not(.display)').velocity({
+				$('#pics h2:not(.display), #pics p, #pics header').velocity({
 					opacity:1
 				},500);
 				self.removeClass('display');
@@ -382,8 +336,12 @@
 		e.preventDefault();
 		var href = $(this).attr('href');
 		//get image offset
-		var img = $(this).find('img'),
-			offset = img.offset(),
+		var img = $(this).find('img');
+		showLightbox(href,img);
+	});
+
+	function showLightbox(href,img) {
+		var offset = img.offset(),
 			oLeft = offset.left,
 			oTop = offset.top,
 			oWidth = img.width(),
@@ -395,6 +353,7 @@
 			width: oWidth + 'px',
 			height: oHeight + 'px',
 		});
+		
 		$('#lightbox').imagesLoaded().always(function() {
 			//get image size
 			var iImg = $('#lightbox').find('img');
@@ -402,12 +361,7 @@
 				iHeight = iImg[0].naturalHeight,
 				vWidth = window.innerWidth,
 				vHeight = window.innerHeight;
-			/*
-			if(iWidth>iHeight) iImg.addClass('landscape');
-			else iImg.addClass('portrait');
-			*/
 
-			//console.log('image size '+iWidth+','+iHeight);
 			//max size 90%:
 			var iScale = Math.min(0.9*vWidth/iWidth,0.9*vHeight/iHeight);
 
@@ -431,25 +385,6 @@
 				nLeft = (vWidth - nWidth)/2,
 				nTop = (vHeight - nHeight)/2;
 			
-			var oCenterX = oLeft + oWidth/2,
-				oCenterY = oTop + oHeight/2,
-				vCenterX = vWidth/2,
-				vCenterY = vHeight/2,
-				aCenterX = oCenterX + (vCenterX - oCenterX)*0.5,
-				aCenterY = oCenterY + (vCenterY - oCenterY)*0.5;
-			
-			//now get intermediate scale
-			var oScale = Math.min(0.8*nWidth/oWidth,0.8*nHeight/oHeight),
-				aWidth = oScale*oWidth,
-				aHeight = oScale*oHeight,
-				aLeft = aCenterX - aWidth/2, //(vWidth - aWidth)/2,
-				aTop = aCenterY - aHeight/2; //(vHeight - aHeight)/2;
-			
-			var yWidth = oScale*xWidth,
-				yHeight = oScale*xHeight,
-				yLeft = (aWidth - yWidth)/2,
-				yTop = (aHeight - yHeight)/2;
-				
 			$('#lightbox-wrap').addClass('show').one('click',function() {
 				var iThis = $(this);
 				$(this).addClass('hide');
@@ -459,16 +394,7 @@
 			});
 			
 			iImg.velocity({
-/*				left: yLeft+'px',
-				top: yTop + 'px',
-				width: yWidth + 'px',
-				height: yHeight + 'px',				
-			},{
-				delay:100,
-				duration:500,
-				easing: [0.4,0,1,1],
-			}).velocity({
-*/				left: 0,
+				left: 0,
 				top: 0,
 				width: nWidth + 'px',
 				height: nHeight + 'px',				
@@ -478,17 +404,7 @@
 				easing: [0.4,0,0.2,1],
 			});
 			$('#lightbox').velocity({
-/*				left: aLeft+'px',
-				top: aTop + 'px',
-				width: aWidth + 'px',
-				height: aHeight + 'px',
-				
-			},{
-				duration:500,
-				delay:100,
-				easing: [0.4,0,1,1],
-			}).velocity({
-*/				left: nLeft+'px',
+				left: nLeft+'px',
 				top: nTop + 'px',
 				width: nWidth + 'px',
 				height: nHeight + 'px',
@@ -496,11 +412,8 @@
 				duration:800,
 				delay:100,
 				easing: [0.4,0,0.2,1],
-				complete: function(elements) {
-					//$(elements).removeClass('display');
-				},				
 			});
 		});
-	});
+	}
 	
 })(window,document,jQuery);
